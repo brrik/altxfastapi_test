@@ -79,11 +79,12 @@ def checkLogin(user_name,password):
 @app.post("/login/adduser/")
 def addUserData(request: Request):
     try:
-        json_data = request.json()
+        json_data = await request.json()
         user_id = json_data.get("userid")
         user_pass = json_data.get("pass")
         user_roll = json_data.get("roll")
         userDataSheet.append_row([user_id,user_pass,user_roll])
+        return True
     except:
         return False
 
