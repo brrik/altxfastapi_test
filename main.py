@@ -65,7 +65,7 @@ async def getRollData(roll):
         return False
 
 @app.get("/login/{user_name}/{password}")
-def checkLogin(user_name,password):
+async def checkLogin(user_name,password):
     try:
         user_datas = userDataSheet.get_all_values()
         for data in user_datas:
@@ -77,7 +77,7 @@ def checkLogin(user_name,password):
         return False
 
 @app.post("/login/adduser/")
-def addUserData(request: Request):
+async def addUserData(request: Request):
     try:
         json_data = await request.json()
         user_id = json_data.get("userid")
