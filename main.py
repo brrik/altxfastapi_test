@@ -22,7 +22,7 @@ scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/aut
 credentials = ServiceAccountCredentials.from_json_keyfile_name(Auth, scope)
 Client = gspread.authorize(credentials)
 
-SpreadSheet = Client.open_by_key("1ecwDfGL5-bQ8Rrrzq7-qUqQ0aOTjtFsR0H44q8upNlk")
+SpreadSheet = Client.open_by_key("1eTYSRjB5TpIXwJQVCFCn8V32wZ_kPK1etwqgvaEa5Oo")
 mainSheet = SpreadSheet.worksheet("Main")
 userDataSheet = SpreadSheet.worksheet("UserData")
 
@@ -31,9 +31,17 @@ async def addRow(request: Request):
     try:
         now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime('%Y年%m月%d日 %H:%M:%S')
         json_data = await request.json()
+
         roll = json_data.get("roll")
         data  = json_data.get("data")
-        mainSheet.append_row([now, roll, data])
+        sentiment = json_data.get("sentiment")
+        sentiment_score_spnegative = json_data.get("sentiment_score_spnegative")
+        sentiment_score_negative = json_data.get("sentiment_score_negative")
+        sentiment_score_neutral = json_data.get("sentiment_score_neutral")
+        sentiment_score_positive = json_data.get("sentiment_score_positive")
+        sentiment_score_sppositive = json_data.get("sentiment_score_sppositive")
+
+        mainSheet.append_row([now, roll, data, sentiment, sentiment_score_spnegative, sentiment_score_negative, sentiment_score_neutral, sentiment_score_positive, sentiment_score_sppositive])
         return True
     except:
         return False
@@ -65,7 +73,7 @@ async def getRollData(roll):
         return False
 
 @app.get("/login/{user_name}/{password}")
-def checkLogin(user_name,password):
+async def checkLogin(user_name,password):
     try:
         user_datas = userDataSheet.get_all_values()
         for data in user_datas:
@@ -77,13 +85,14 @@ def checkLogin(user_name,password):
         return False
 
 @app.post("/login/adduser/")
-def addUserData(request: Request):
+async def addUserData(request: Request):
     try:
-        json_data = request.json()
+        json_data = await request.json()
         user_id = json_data.get("userid")
         user_pass = json_data.get("pass")
         user_roll = json_data.get("roll")
         userDataSheet.append_row([user_id,user_pass,user_roll])
+        return True
     except:
         return False
 
