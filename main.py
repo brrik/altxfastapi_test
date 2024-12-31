@@ -91,8 +91,14 @@ async def addUserData(request: Request):
         user_id = json_data.get("userid")
         user_pass = json_data.get("pass")
         user_roll = json_data.get("roll")
-        userDataSheet.append_row([user_id,user_pass,user_roll])
-        return True
+
+        user_data = userDataSheet.get_all_values()
+        for i in user_data:
+            if i[0] == user_id:
+                return False
+        else:
+            userDataSheet.append_row([user_id,user_pass,user_roll])
+            return True
     except:
         return False
 
