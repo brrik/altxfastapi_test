@@ -95,7 +95,7 @@ async def addUserData(request: Request):
         user_data = userDataSheet.get_all_values()
         for i in user_data:
             if i[0] == user_id:
-                return False
+                return "重複エラー"
         else:
             userDataSheet.append_row([user_id,user_pass,user_roll])
             return True
